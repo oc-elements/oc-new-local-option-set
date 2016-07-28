@@ -1,0 +1,94 @@
+<link rel="import" href="../polymer/polymer.html">
+
+<link rel="import" href="../oc-new-option-set/oc-new-option-set.html">
+<link rel="import" href="../oc-product-option-api/oc-product-option-api.html">
+
+
+
+<!--
+`oc-new-local-option-set`
+Element for creating a new local option set
+
+@demo demo/index.html 
+-->
+
+<dom-module id="oc-new-local-option-set">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+    </style>
+    <oc-product-option-api id="optionsApi"></oc-product-option-api>
+    <oc-new-option-set
+            id="newOptionSetControl"
+            on-option-set-create="_onCreateOptionSet"
+            on-option-create="_onCreateOption"
+            on-option-set-refresh="_onRefreshOptionSet"
+            on-option-set-delete="_onDeleteOptionSet"
+    ></oc-new-option-set>
+  </template>
+
+  <script>
+    Polymer({
+
+      is: 'oc-new-local-option-set',
+
+      properties: {
+        prop1: {
+          type: String,
+          value: 'oc-new-local-option-set',
+        },
+      },
+
+      _onCreateOptionSet: function(event) {
+        this.loading = true;
+        this.$.optionsApi.createOptionSet(event.detail)
+                .then(function(response) {
+                  var resp = response.xhr.getAllResponseHeaders();
+                  this._optionSetId = resp.substring(resp.lastIndexOf("/")+1).trim();
+                  this._options = [];
+                  this.$.newOptionSetControl.showOptionsList(true);
+                }.bind(this))
+                .catch(this.fire.bind(this, 'options_error', 'Could not create option set'))
+                .finally(this.set.bind(this, 'loading', false));
+      },
+
+      _onCreateOption: function(event) {
+        this.loading = true;
+        this.$.optionsApi.createOption(this.organisationId,
+                {
+                  name: event.detail.name,
+                  price: event.detail.price,
+                  description: event.detail.description,
+                  setId: this._optionSetId,
+                  itemsPluFlatMappingEnabled: false})
+                .then(function() {this._refreshOptions()}.bind(this))
+                .catch(this.fire.bind(this, 'options_error', 'Could not update option set'))
+      },
+
+      _onRefreshOptionSet: function(event) {
+        this.loading = true;
+        this.$.optionsApi.getOptionSet(this._optionSetId)
+                .then(function(response) {
+                  this._options = response.response.options;
+                }.bind(this))
+                .catch(this.fire.bind(this, 'options_error', 'Could not update option set'))
+                .finally(function () {
+                  this.$.newOptionSetControl.showNewOptionInput(false);
+                  this.loading = false;
+                }.bind(this));
+      },
+
+      _onDeleteOptionSet: function(event) {
+        this.loading = true;
+        this.$.optionsApi.deleteOption(event.detail.id)
+                .then(function () {
+                  this._refreshOptions();
+                }.bind(this))
+                .catch(this.fire.bind(this, 'options_error', 'Could not delete option'))
+      }
+
+    });
+  </script>
+</dom-module>

@@ -1,0 +1,16 @@
+{
+  "name": "oc-new-local-option-set",
+  "description": "Element for creating a new local option set",
+  "main": "oc-new-local-option-set.html",
+  "dependencies": {
+    "polymer": "Polymer/polymer#^1.4.0",
+    "oc-new-option-set": "git://github.com/oc-elements/oc-new-option-set#1.x",
+    "oc-product-option-api": "git://github.com/oc-elements/oc-product-option-api#1.x"
+  },
+  "devDependencies": {
+    "iron-component-page": "PolymerElements/iron-component-page#^1.0.0",
+    "iron-demo-helpers": "PolymerElements/iron-demo-helpers#^1.0.0",
+    "web-component-tester": "^4.0.0",
+    "webcomponentsjs": "webcomponents/webcomponentsjs#^0.7.0"
+  }
+}
