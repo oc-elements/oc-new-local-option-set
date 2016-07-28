@@ -35,9 +35,10 @@ Element for creating a new local option set
       is: 'oc-new-local-option-set',
 
       properties: {
-        prop1: {
-          type: String,
-          value: 'oc-new-local-option-set',
+        organisationId: Number,
+        loading: {
+          type: Boolean,
+          notify: true
         },
       },
 
